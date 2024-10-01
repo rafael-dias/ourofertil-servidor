@@ -1,0 +1,6 @@
+node_modules
+banco
+.env
+.history
+yarn-debug.log*
+yarn-error.log*

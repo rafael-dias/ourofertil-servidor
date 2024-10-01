@@ -1,0 +1,27 @@
+const { Sequelize } = require('sequelize');
+const db = require('./db')
+
+const Usuarios = db.define('usuarios', {
+    id:{
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull:false,
+        primaryKey:true
+        }
+    ,
+    usuario:{
+        type: Sequelize.STRING,
+        allowNull:false
+    },
+    senha: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    cidade: {
+        type: Sequelize.STRING,
+        allowNull: false
+    }
+    
+})
+
+module.exports = Usuarios;
