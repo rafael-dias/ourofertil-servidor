@@ -2,12 +2,12 @@ const { Sequelize } = require('sequelize');
 const db = require('./db')
 
 const Registro = db.define('registro', {
-    id:{
+    id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
-        allowNull:false,
-        primaryKey:true
-        }
+        allowNull: false,
+        primaryKey: true
+    }
     ,
     // id_cliente:{
     //     type: Sequelize.INTEGER,
@@ -15,15 +15,19 @@ const Registro = db.define('registro', {
     //     references: 'clientes', // <<< Note, its table's name, not object name
     //     referencesKey: 'id'
     // },
-    cliente:{
+    cliente: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
     },
-    cnpj:{
+    cnpj: {
         type: Sequelize.STRING,
-        allowNull:false
+        allowNull: false
     },
     doc_carga: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    telefone: {
         type: Sequelize.STRING,
         allowNull: false
     },
@@ -35,23 +39,35 @@ const Registro = db.define('registro', {
         type: Sequelize.STRING,
         allowNull: false
     },
-    volume: {
-        type: Sequelize.STRING,
+    volume_recebido: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    volume_venda: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    volume_carregado: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
+    volume_tanque: {
+        type: Sequelize.INTEGER,
         allowNull: false
     },
     estacao: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false
     },
-    volume_estacao: {
-        type: Sequelize.STRING,
+    evento: {
+        type: Sequelize.INTEGER,
         allowNull: false
     },
     data: {
         type: Sequelize.STRING,
         allowNull: false
     }
-    
+
 })
 
 module.exports = Registro;
