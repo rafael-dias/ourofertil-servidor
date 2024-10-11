@@ -20,6 +20,10 @@ const Usuarios = db.define('usuarios', {
     cidade: {
         type: Sequelize.STRING,
         allowNull: false
+    },
+    tipo_usuario: {
+        type: Sequelize.INTEGER,
+        allowNull: false
     }
     
 })
