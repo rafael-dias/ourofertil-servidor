@@ -4,8 +4,8 @@
     <div class="container">
 
       <div class="row">
-        <h3 class="mb-5">Registro da Estação: Vacaria <span class="btn bt-sm btn-outline-secondary">Exportar
-            Dados</span>
+        <h3 class="mb-5">Registro da Estação: {{ store.estacao }} <span class="btn bt-sm btn-outline-secondary"
+            @click="FetchRegistros">Atualizar</span>
         </h3>
         <div class="row">
 
@@ -17,10 +17,13 @@
 
               <div class="card-body">
 
-                <BarChart :volume="store.estacoes[store.estacao].ultimo_registro.volume_tanque" :capaciade="200000" :cor="status[store.estacoes[store.estacao].ultimo_registro.status].cor" />
+                <BarChart :volume="store.estacoes[store.estacao].ultimo_registro.volume_tanque" :capaciade="200000"
+                  :cor="status[store.estacoes[store.estacao].ultimo_registro.status].cor" />
                 <p class=" text-center"> <span class="badge text-bg-success"
-                    :class="status[store.estacoes[store.estacao].ultimo_registro.status].class">{{ status[store.estacoes[store.estacao].ultimo_registro.status].nome }}</span></p>
-                <p class=" text-center mt-3 text-body-secondary">ultima atualização: {{ formatDate(store.estacoes[store.estacao].ultimo_registro.data) }}</p>
+                    :class="status[store.estacoes[store.estacao].ultimo_registro.status].class">{{
+                    status[store.estacoes[store.estacao].ultimo_registro.status].nome }}</span></p>
+                <p class=" text-center mt-3 text-body-secondary">ultima atualização: {{
+                  formatDate(store.estacoes[store.estacao].ultimo_registro.data) }}</p>
                 <div class="mt-3 pt-3 mb-0  pb-0 card-footer text-body-secondary d-flex">
                   <!-- <RouterLink class="ms-auto me-0  btn btn-outline-secondary card-link" to="/registro">Detalhes
                   </RouterLink> -->
@@ -73,7 +76,7 @@
                   <td>{{ reg.volume_tanque }}</td>
                   <td>{{ reg.evento == 0 ?'fornecimento':'recebimento' }}</td>
                   <td>
-                    <div class="btn btn-sm btn-outline-secondary ">Detalhes</div>
+                    <div class="btn btn-sm btn-outline-secondary " @click="ModalDetalhes(reg)">Detalhes</div>
                   </td>
                 </tr>
 
@@ -93,10 +96,27 @@
                 </li>
               </ul>
             </nav>
+            <span class="btn bt-sm btn-outline-secondary">Exportar
+              Dados</span>
           </div>
         </div>
       </div>
-
+      <div class="modal" tabindex="-1" id="modal-detalhe">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Detalhe do Registro</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <pre>{{modal_detalhes}}</pre>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
       <!-- <div class="row mb-3">
@@ -116,9 +136,11 @@
 import BarChart from './BarChart.vue'
 import api from "../services/api.js";
 import { store } from '../store.js'
+import MixinGeral from "../mixins/mixin_geral.js"
 export default {
   name: 'Clientes',
   components: { BarChart },
+  mixins: [MixinGeral],
   data() {
     return {
       store,
@@ -128,7 +150,7 @@ export default {
         { nome: 'nível baixo', class: 'text-bg-danger', cor: '#dc3545' },
         { nome: 'nível médio', class: 'text-bg-warning', cor: '#ffc107' },
       ],
-      estacoes: [
+      nome_estacoes: [
         { nome: 'Vacaria', volume: 78000, status: 1 },
         { nome: 'Clemente Argolo', volume: 122000, status: 0 },
         { nome: 'Campos Novos', volume: 45000, status: 2 },
@@ -140,64 +162,8 @@ export default {
         // {nome:'Caxias do Sul', volume:5000},
       ],
       registros:[],
-      clientes:[
-        {
-          nome: 'CLiente 1',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 2',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 3',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 4',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 5',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 6',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 7',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-        {
-          nome: 'CLiente 8',
-          doc: '099999999999',
-          transportador: 'Transportador 1',
-          placa: 'AAA-9999',
-          volume_total: '35.789l',
-        },
-      ]
+      modal_detalhes:{}
+      
     };
   },
   computed:{
@@ -227,54 +193,60 @@ export default {
     this.FetchRegistros()
   },
   methods: {
+    ModalDetalhes(registro){
+      this.modal_detalhes = registro
+      console.log('entra');
+      
+      this.Modal('modal-detalhe', 'show')
 
-    FetchRegistros() {
-      let token = localStorage.getItem('token');
-      const config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-      let self = this
-      api.get("/registros", config).then((response) => {
-        self.store.estacoes = self.AgruparPorEstacao(response.data.registros)
-        self.store.registros = response.data.registros
-      })
-    },
+    }
+    // FetchRegistros() {
+    //   let token = localStorage.getItem('token');
+    //   const config = {
+    //     headers: { Authorization: `Bearer ${token}` }
+    //   };
+    //   let self = this
+    //   api.get("/registros", config).then((response) => {
+    //     self.store.estacoes = self.AgruparPorEstacao(response.data.registros)
+    //     self.store.registros = response.data.registros
+    //   })
+    // },
 
-    // Função para agrupar por estação
-    AgruparPorEstacao(array) {
-      return array.reduce((acc, obj) => {
-        const station = obj.estacao;
-        if (!acc[station]) {
-          acc[station] = {
-            estacao: station,
-            registros: [],
-            ultimo_registro: null
-          };
-        }
-        acc[station].registros.push(obj);
-        // Atualiza o último registro se a data for mais recente
-        if (!acc[station].ultimo_registro || new Date(obj.data) > new Date(acc[station].ultimo_registro.data)) {
-          if (obj.volume_tanque <= 20000) {
-            obj.status = 1
-          } else {
-            obj.status = 0
+    // // Função para agrupar por estação
+    // AgruparPorEstacao(array) {
+    //   return array.reduce((acc, obj) => {
+    //     const station = obj.estacao;
+    //     if (!acc[station]) {
+    //       acc[station] = {
+    //         estacao: station,
+    //         registros: [],
+    //         ultimo_registro: null
+    //       };
+    //     }
+    //     acc[station].registros.push(obj);
+    //     // Atualiza o último registro se a data for mais recente
+    //     if (!acc[station].ultimo_registro || new Date(obj.data) > new Date(acc[station].ultimo_registro.data)) {
+    //       if (obj.volume_tanque <= 20000) {
+    //         obj.status = 1
+    //       } else {
+    //         obj.status = 0
 
-          }
-          acc[station].ultimo_registro = obj;
-        }
-        return acc;
-      }, {});
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
-      const year = date.getFullYear();
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
+    //       }
+    //       acc[station].ultimo_registro = obj;
+    //     }
+    //     return acc;
+    //   }, {});
+    // },
+    // formatDate(dateString) {
+    //   const date = new Date(dateString);
+    //   const day = String(date.getDate()).padStart(2, '0');
+    //   const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+    //   const year = date.getFullYear();
+    //   const hours = String(date.getHours()).padStart(2, '0');
+    //   const minutes = String(date.getMinutes()).padStart(2, '0');
 
-      return `${day}/${month}/${year} - ${hours}:${minutes}`;
-    },
+    //   return `${day}/${month}/${year} - ${hours}:${minutes}`;
+    // },
     
   },
 };

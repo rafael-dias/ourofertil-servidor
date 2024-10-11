@@ -22,9 +22,9 @@ import Registro from './components/Registro.vue'
 
 const routes = [
     { path: '/', component: Login },
-    { path: '/login', component: Login },
-    { path: '/projeto', component: Projeto },
-    { path: '/registro', component: Registro },
+    { path: '/login',  component: Login },
+    { path: '/projeto', name: 'tanques', component: Projeto },
+    { path: '/registro', name: 'registros', component: Registro },
     // { path: '/clientes', component: Clientes },
     // { path: '/graficos', component: Graficos },
     // { path: '/trocar_dados', component: Websocket },
