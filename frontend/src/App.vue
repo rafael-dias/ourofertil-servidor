@@ -1,11 +1,7 @@
-<script setup>
-import Projeto from './components/Projeto.vue'
-</script>
-
 <template>
-  <nav class="navbar navbar-expand-lg bg-dark mb-5" data-bs-theme="dark" v-if="store.autenticacao">
+  <nav class="navbar navbar-expand-lg bg-dark mb-5" data-bs-theme="dark" v-if="$route.name != 'login'">
     <div class="container">
-      <RouterLink class="navbar-brand" to="/projeto" href="#">Ourofertil</RouterLink>
+      <RouterLink class="navbar-brand" to="/estacoes" href="#">Ourofertil</RouterLink>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -13,7 +9,7 @@ import Projeto from './components/Projeto.vue'
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <RouterLink class="nav-link" to="/projeto">Tanques</RouterLink>
+            <RouterLink class="nav-link" to="/estacoes">Estações</RouterLink>
           </li>
           <!-- <li class="nav-item">
             <RouterLink class="nav-link" to="/clientes">Clientes</RouterLink>

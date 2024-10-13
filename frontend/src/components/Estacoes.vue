@@ -5,7 +5,7 @@
       <h3 class="mb-5">Estações de Abastecimento </h3>
 
       <div class="row">
-        <div class="col-3 mb-3" v-for="estacao in store.estacoes">
+        <div class="col-12 col-xl-3  col-md-6 d-flex justify-content-center mb-3" v-for="estacao in store.estacoes">
           <div class="card" style="width: 18rem;">
             <h6 class="card-header">
               Estação {{estacao.estacao}}
@@ -18,7 +18,8 @@
               <p class=" text-center"> <span class="badge text-bg-success"
                   :class="status[estacao.ultimo_registro.status].class">{{
                   status[estacao.ultimo_registro.status].nome}}</span></p>
-              <p class=" text-center mt-3 text-body-secondary">ultima atualização:  {{formatDate(estacao.ultimo_registro.data)}}</p>
+              <p class=" text-center mt-3 text-body-secondary">ultima atualização:
+                {{formatDate(estacao.ultimo_registro.data)}}</p>
               <div class="mt-3 pt-3 mb-0  pb-0 card-footer text-body-secondary d-flex">
                 <div class="ms-auto me-0  btn btn-outline-secondary card-link" @click="Detalhes(estacao)">Detalhes
                 </div>
@@ -40,7 +41,7 @@ import { store } from '../store.js'
 import MixinGeral from "../mixins/mixin_geral.js"
 
 export default {
-  name: 'Projeto',
+  name: 'Estacoes',
   components: { BarChart },
   mixins: [MixinGeral],
   data() {
@@ -67,14 +68,14 @@ export default {
     };
   },
   created() {
-    if (this.store.autenticacao == undefined) {
-      this.$router.push("/");
-    } else {
+    // if (this.store.autenticacao == undefined) {
+    //   this.$router.push("/");
+    // } else {
       // this.CarregarAlunos();
 
       this.FetchRegistros()
       //  this.$refs.entrada.$el.focus()
-    }
+    // }
    
 
   },
@@ -129,7 +130,8 @@ export default {
     // },
      Detalhes(ele) {
       this.store.estacao = ele.estacao
-      this.$router.push('/registro')
+      localStorage.setItem('estacao', ele.estacao)
+      this.$router.push('/registros')
     },
 
 

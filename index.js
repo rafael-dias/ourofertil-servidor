@@ -78,7 +78,7 @@ app.use(bodyParser.json());
 
 // Função para gerar token JWT
 function generateToken(user) {
-    return jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '7d' });
+    return jwt.sign({ id: user.id, usuario: user.usuario }, SECRET_KEY, { expiresIn: '7d' });
 }
 
 // Middleware de autenticação
@@ -86,12 +86,13 @@ function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; 
 
-        // console.log(token);
         
     if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, SECRET_KEY, (err, user) => {
-        if (err) return res.sendStatus(403);
+    jwt.verify(token, SECRET_KEY, { clockTolerance: 50 },(err, user) => {
+        // console.log('erro ', err);
+        
+        if (err) return res.status(403).json({ message: 'Token é invalido ou esta expirado' });
         req.user = user;
         next();
     });
@@ -199,35 +200,18 @@ app.post('/registros',  async (req, res) => {
 
 
 app.post('/sync', async (req, res) => {
-    console.log(req.body);
-
-
-
-    // const { cliente, doc_carga, cnpj, nome_transportador, placa, volume, data, estacao, volume_estacao } = req.body
-
+    // console.log(req.body);
     let options = {
         fields: ["cliente", "nome_transportador", "cnpj", "placa", "telefone", "doc_carga", "volume_recebido", "volume_venda", "volume_carregado", "volume_tanque", "estacao", "data", "evento"]
     }
     await Registro.bulkCreate(req.body, options)
-
-
-
     res.status(200).json({ msg: 'ok' })
-
-
 })
 
 app.get('/registros', authenticateToken, async (req, res) => {
-// console.console.log(req.headers);
-
-
+// console.log('registros', req.body);
     let registros = await Registro.findAll()
-
-
-
     res.status(200).json({ registros })
-
-
 })
 
 

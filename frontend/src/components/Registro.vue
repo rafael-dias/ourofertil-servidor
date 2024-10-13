@@ -4,12 +4,15 @@
     <div class="container">
 
       <div class="row">
-        <h3 class="mb-5">Registro da Estação: {{ store.estacao }} <span class="btn bt-sm btn-outline-secondary"
-            @click="FetchRegistros">Atualizar</span>
+        <h3 class="mb-5">Registro da Estação: {{ store.estacao }} <button @click="Atualizar"
+            class="btn bt-sm btn-outline-secondary" type="button">
+            <span class="spinner-border spinner-border-sm" aria-hidden="true" v-show="loading"></span>
+            <span role="status" v-text="loading ? 'Atualizando...': 'Atualizar'"></span>
+          </button>
         </h3>
         <div class="row">
 
-          <div class="col-3 mb-3">
+          <div class="col-12 col-xxl-3 mb-3 d-flex justify-content-center ">
             <div class="card" style="width: 18rem;">
               <h6 class="card-header">
                 Estação {{ store.estacoes[store.estacao].estacao }}
@@ -33,28 +36,30 @@
               </div>
             </div>
           </div>
-          <div class="col-9">
-            <table class="table table-sm table-striped table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Cliente</th>
-                  <th scope="col">CPF/CNPJ</th>
-                  <th scope="col">Documento Carga</th>
-                  <th scope="col">Volume Recebido</th>
-                  <th scope="col">Volume Venda</th>
-                  <th scope="col">Volume Carregado</th>
-                  <th scope="col">Volume Tanque</th>
-                  <th scope="col">Evento</th>
-                  <th scope="col">Detalhes</th>
-                </tr>
-              </thead>
-              <!-- 
-              cliente,
-              nome_transportador,
-              cnpj,
-              placa,
-              telefone,
+          <div class="col-12 col-xxl-9 ">
+            <div class="table-responsive">
+
+              <table class="table table-sm table-striped table-hover ">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nome</th>
+                    <th scope="col">CPF/CNPJ</th>
+                    <th scope="col">Documento Carga</th>
+                    <th scope="col">Volume Recebido</th>
+                    <th scope="col">Volume Venda</th>
+                    <th scope="col">Volume Fornecido</th>
+                    <th scope="col">Volume Tanque</th>
+                    <th scope="col">Evento</th>
+                    <th scope="col">Detalhes</th>
+                  </tr>
+                </thead>
+                <!-- 
+                  cliente,
+                  nome_transportador,
+                  cnpj,
+                  placa,
+                  telefone,
               doc_carga,
               volume_recebido,
               volume_venda,
@@ -63,25 +68,26 @@
               estacao,
               data:dataF,
               evento -->
-              <tbody>
-                <tr v-for="(reg, i) in store.estacoes[store.estacao].registros">
-                  <th scope="row">{{ i + 1 }}</th>
-                  <td>{{ reg.cliente }}</td>
-                  <!-- <td>{{ reg.nome_transportador }}</td> -->
-                  <td>{{ reg.cnpj }}</td>
-                  <td>{{ reg.doc_carga }}</td>
-                  <td>{{ reg.volume_recebido }}</td>
-                  <td>{{ reg.volume_venda }}</td>
-                  <td>{{ reg.volume_carregado }}</td>
-                  <td>{{ reg.volume_tanque }}</td>
-                  <td>{{ reg.evento == 0 ?'fornecimento':'recebimento' }}</td>
-                  <td>
-                    <div class="btn btn-sm btn-outline-secondary " @click="ModalDetalhes(reg)">Detalhes</div>
-                  </td>
-                </tr>
+                <tbody>
+                  <tr v-for="(reg, i) in store.estacoes[store.estacao].registros">
+                    <th scope="row">{{ i + 1 }}</th>
+                    <td>{{ reg.cliente }}</td>
+                    <!-- <td>{{ reg.nome_transportador }}</td> -->
+                    <td>{{ reg.cnpj }}</td>
+                    <td>{{ reg.doc_carga }}</td>
+                    <td>{{ reg.volume_recebido }}</td>
+                    <td>{{ reg.volume_venda }}</td>
+                    <td>{{ reg.volume_carregado }}</td>
+                    <td>{{ reg.volume_tanque }}</td>
+                    <td>{{ reg.evento == 0 ?'fornecimento':'recebimento' }}</td>
+                    <td>
+                      <div class="btn btn-sm btn-outline-secondary " @click="ModalDetalhes(reg)">Detalhes</div>
+                    </td>
+                  </tr>
 
-              </tbody>
-            </table>
+                </tbody>
+              </table>
+            </div>
 
             <nav aria-label="Page navigation example">
               <ul class="pagination justify-content-center">
@@ -109,7 +115,84 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <pre>{{modal_detalhes}}</pre>
+              <!-- <pre>{{modal_detalhes}}</pre> -->
+              <form>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="cliente" class="form-label">Cliente</label>
+                    <input type="text" class="form-control" id="cliente" v-model="modal_detalhes.cliente" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="cnpj" class="form-label">CNPJ</label>
+                    <input type="text" class="form-control" id="cnpj" v-model="modal_detalhes.cnpj" disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="doc_carga" class="form-label">Doc Carga</label>
+                    <input type="text" class="form-control" id="doc_carga" v-model="modal_detalhes.doc_carga" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" class="form-control" id="telefone" v-model="modal_detalhes.telefone" disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="nome_transportador" class="form-label">Nome Transportador</label>
+                    <input type="text" class="form-control" id="nome_transportador"
+                      v-model="modal_detalhes.nome_transportador" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="placa" class="form-label">Placa</label>
+                    <input type="text" class="form-control" id="placa" v-model="modal_detalhes.placa" disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="volume_recebido" class="form-label">Volume Recebido</label>
+                    <input type="number" class="form-control" id="volume_recebido"
+                      v-model="modal_detalhes.volume_recebido" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="volume_venda" class="form-label">Volume Venda</label>
+                    <input type="number" class="form-control" id="volume_venda" v-model="modal_detalhes.volume_venda"
+                      disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="volume_carregado" class="form-label">Volume Carregado</label>
+                    <input type="number" class="form-control" id="volume_carregado"
+                      v-model="modal_detalhes.volume_carregado" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="volume_tanque" class="form-label">Volume Tanque</label>
+                    <input type="number" class="form-control" id="volume_tanque" v-model="modal_detalhes.volume_tanque"
+                      disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="estacao" class="form-label">Estação</label>
+                    <input type="number" class="form-control" id="estacao" v-model="modal_detalhes.estacao" disabled>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="evento" class="form-label">Evento</label>
+                    <input type="text" class="form-control" id="evento" :value="evento[modal_detalhes.evento]" disabled>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="data" class="form-label">Data</label>
+                    <input type="text" class="form-control" id="data" :value="formatDate(modal_detalhes.data)" disabled>
+                  </div>
+                  <!-- <div class="col-md-6 mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <input type="number" class="form-control" id="status" value="0" disabled>
+                  </div> -->
+                </div>
+              </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
@@ -145,6 +228,8 @@ export default {
     return {
       store,
       busca:'',
+      loading:false,
+      evento:['fornecimento', 'recebimento'],
       status: [
         { nome: 'nível normal', class: 'text-bg-success', cor: '#198754' },
         { nome: 'nível baixo', class: 'text-bg-danger', cor: '#dc3545' },
@@ -190,15 +275,26 @@ export default {
    
   },
   created() {
+    if(!this.store.estacao){
+      this.store.estacao = localStorage.getItem('estacao')
+    }
     this.FetchRegistros()
   },
   methods: {
     ModalDetalhes(registro){
       this.modal_detalhes = registro
-      console.log('entra');
       
       this.Modal('modal-detalhe', 'show')
 
+    },
+    Atualizar(){
+      let self = this
+      self.loading = true
+      setTimeout(() => {
+        self.loading = false
+        
+      }, 200);
+      this.FetchRegistros()
     }
     // FetchRegistros() {
     //   let token = localStorage.getItem('token');

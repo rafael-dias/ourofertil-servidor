@@ -35,14 +35,16 @@ export default {
     }
   },
   created() {
-    // if (this.store.autenticacao == undefined) {
-    //   this.$router.push("/");
-    // } else {
-      // this.CarregarAlunos();
 
-  //    this.FetchRegistros()
-      //  this.$refs.entrada.$el.focus()
-    // }
+
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Verifique a validade do token se necessário
+      this.$router.push('/estacoes'); // Redireciona para a página protegida
+      this.store.autenticacao = token
+    } else {
+      this.$router.push('/login'); // Redireciona para a página de login
+    }
    
 
   },
@@ -55,11 +57,12 @@ export default {
       
       
       api.post("/login", {usuario, senha}).then((response)=>{
+       
         const data = response.data;
         if (response.status == 200) {
           self.store.autenticacao = data.token
           localStorage.setItem('token', data.token);
-          self.$router.push('/projeto')
+          self.$router.push('/estacoes')
         } else {
           alert(data.message);
         }

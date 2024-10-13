@@ -3,7 +3,7 @@ export default {
 
     methods: {
         Modal(idmodal, e) {
-            
+
             let ele = document.getElementById(idmodal)
             let modal = bootstrap.Modal.getOrCreateInstance(ele)
             // console.log('[ modal]: ', modal) 
@@ -27,13 +27,29 @@ export default {
         },
         FetchRegistros() {
             let self = this
-            let token = localStorage.getItem('token');
+            const token = localStorage.getItem('token');
+
             const config = {
                 headers: { Authorization: `Bearer ${token}` }
             };
+
+        //    console.log(config);
+           
             api.get("/registros", config).then((response) => {
+                // console.log(response);
+                
+                // if (response.status == 403 || response.status == 401){
+                //     self.$router.push('/login')
+                //     return
+                // }
+                // self.store.autenticacao = true
                 self.store.estacoes = self.AgruparPorEstacao(response.data.registros)
                 self.store.registros = response.data.registros
+            }).catch((err)=>{
+                localStorage.removeItem('token')
+                self.$router.push('/login')
+                console.log('err');
+                
             })
         },
 
