@@ -210,7 +210,9 @@ app.post('/sync', async (req, res) => {
 
 app.get('/registros', authenticateToken, async (req, res) => {
 // console.log('registros', req.body);
-    let registros = await Registro.findAll()
+    let registros = await Registro.findAll({
+        order: [['createdAt', 'DESC']]
+    })
     res.status(200).json({ registros })
 })
 

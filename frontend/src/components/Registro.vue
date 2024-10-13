@@ -43,7 +43,7 @@
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Nome</th>
+                    <th scope="col">Cliente/Fornecedor</th>
                     <th scope="col">CPF/CNPJ</th>
                     <th scope="col">Documento Carga</th>
                     <th scope="col">Volume Recebido</th>
@@ -118,16 +118,16 @@
               <!-- <pre>{{modal_detalhes}}</pre> -->
               <form>
                 <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label for="cliente" class="form-label">Cliente</label>
+                  <div class="col-md-12 mb-3">
+                    <label for="cliente" class="form-label">Cliente/Fornecedor</label>
                     <input type="text" class="form-control" id="cliente" v-model="modal_detalhes.cliente" disabled>
                   </div>
+                </div>
+                <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="cnpj" class="form-label">CNPJ</label>
                     <input type="text" class="form-control" id="cnpj" v-model="modal_detalhes.cnpj" disabled>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col-md-6 mb-3">
                     <label for="doc_carga" class="form-label">Doc Carga</label>
                     <input type="text" class="form-control" id="doc_carga" v-model="modal_detalhes.doc_carga" disabled>
@@ -136,8 +136,7 @@
                     <label for="telefone" class="form-label">Telefone</label>
                     <input type="text" class="form-control" id="telefone" v-model="modal_detalhes.telefone" disabled>
                   </div>
-                </div>
-                <div class="row">
+                
                   <div class="col-md-6 mb-3">
                     <label for="nome_transportador" class="form-label">Nome Transportador</label>
                     <input type="text" class="form-control" id="nome_transportador"
@@ -147,8 +146,7 @@
                     <label for="placa" class="form-label">Placa</label>
                     <input type="text" class="form-control" id="placa" v-model="modal_detalhes.placa" disabled>
                   </div>
-                </div>
-                <div class="row">
+               
                   <div class="col-md-6 mb-3">
                     <label for="volume_recebido" class="form-label">Volume Recebido</label>
                     <input type="number" class="form-control" id="volume_recebido"
@@ -159,8 +157,7 @@
                     <input type="number" class="form-control" id="volume_venda" v-model="modal_detalhes.volume_venda"
                       disabled>
                   </div>
-                </div>
-                <div class="row">
+               
                   <div class="col-md-6 mb-3">
                     <label for="volume_carregado" class="form-label">Volume Carregado</label>
                     <input type="number" class="form-control" id="volume_carregado"
@@ -171,8 +168,7 @@
                     <input type="number" class="form-control" id="volume_tanque" v-model="modal_detalhes.volume_tanque"
                       disabled>
                   </div>
-                </div>
-                <div class="row">
+               
                   <div class="col-md-6 mb-3">
                     <label for="estacao" class="form-label">Estação</label>
                     <input type="number" class="form-control" id="estacao" v-model="modal_detalhes.estacao" disabled>
@@ -181,8 +177,7 @@
                     <label for="evento" class="form-label">Evento</label>
                     <input type="text" class="form-control" id="evento" :value="evento[modal_detalhes.evento]" disabled>
                   </div>
-                </div>
-                <div class="row">
+                
                   <div class="col-md-6 mb-3">
                     <label for="data" class="form-label">Data</label>
                     <input type="text" class="form-control" id="data" :value="formatDate(modal_detalhes.data)" disabled>
