@@ -10,6 +10,8 @@
             <span role="status" v-text="loading ? 'Atualizando...': 'Atualizar'"></span>
           </button>
         </h3>
+
+
         <div class="row">
 
           <div class="col-12 col-xxl-3 mb-3 d-flex justify-content-center ">
@@ -37,13 +39,24 @@
             </div>
           </div>
           <div class="col-12 col-xxl-9 ">
+            <div class="col-12 mb-2">
+
+              filtros: <span class="btn btn-sm me-2" :class="[filtro == 0 ? 'btn-success' : 'btn-outline-secondary']"
+                @click="filtro = 0">todos</span>
+              <span class="btn btn-sm me-2" :class="[filtro == 1 ? 'btn-success' : 'btn-outline-secondary']"
+                @click="filtro = 1">fornecimento</span>
+              <span class="btn btn-sm  me-auto" :class="[filtro == 2 ? 'btn-success' : 'btn-outline-secondary']"
+                @click="filtro = 2">recebimento</span>
+
+
+            </div>
             <div class="table-responsive">
 
               <table class="table table-sm table-striped table-hover ">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Cliente/Fornecedor</th>
+                    <th scope="col">{{ titulo_filtro[filtro]}}</th>
                     <th scope="col">CPF/CNPJ</th>
                     <th scope="col">Documento Carga</th>
                     <th scope="col">Volume Recebido</th>
@@ -69,7 +82,7 @@
               data:dataF,
               evento -->
                 <tbody>
-                  <tr v-for="(reg, i) in store.estacoes[store.estacao].registros">
+                  <tr v-for="(reg, i) in Registros">
                     <th scope="row">{{ i + 1 }}</th>
                     <td>{{ reg.cliente }}</td>
                     <!-- <td>{{ reg.nome_transportador }}</td> -->
@@ -136,7 +149,7 @@
                     <label for="telefone" class="form-label">Telefone</label>
                     <input type="text" class="form-control" id="telefone" v-model="modal_detalhes.telefone" disabled>
                   </div>
-                
+
                   <div class="col-md-6 mb-3">
                     <label for="nome_transportador" class="form-label">Nome Transportador</label>
                     <input type="text" class="form-control" id="nome_transportador"
@@ -146,7 +159,7 @@
                     <label for="placa" class="form-label">Placa</label>
                     <input type="text" class="form-control" id="placa" v-model="modal_detalhes.placa" disabled>
                   </div>
-               
+
                   <div class="col-md-6 mb-3">
                     <label for="volume_recebido" class="form-label">Volume Recebido</label>
                     <input type="number" class="form-control" id="volume_recebido"
@@ -157,7 +170,7 @@
                     <input type="number" class="form-control" id="volume_venda" v-model="modal_detalhes.volume_venda"
                       disabled>
                   </div>
-               
+
                   <div class="col-md-6 mb-3">
                     <label for="volume_carregado" class="form-label">Volume Carregado</label>
                     <input type="number" class="form-control" id="volume_carregado"
@@ -168,7 +181,7 @@
                     <input type="number" class="form-control" id="volume_tanque" v-model="modal_detalhes.volume_tanque"
                       disabled>
                   </div>
-               
+
                   <div class="col-md-6 mb-3">
                     <label for="estacao" class="form-label">Estação</label>
                     <input type="number" class="form-control" id="estacao" v-model="modal_detalhes.estacao" disabled>
@@ -177,7 +190,7 @@
                     <label for="evento" class="form-label">Evento</label>
                     <input type="text" class="form-control" id="evento" :value="evento[modal_detalhes.evento]" disabled>
                   </div>
-                
+
                   <div class="col-md-6 mb-3">
                     <label for="data" class="form-label">Data</label>
                     <input type="text" class="form-control" id="data" :value="formatDate(modal_detalhes.data)" disabled>
@@ -216,11 +229,13 @@ import api from "../services/api.js";
 import { store } from '../store.js'
 import MixinGeral from "../mixins/mixin_geral.js"
 export default {
-  name: 'Clientes',
+  name: 'Registros',
   components: { BarChart },
   mixins: [MixinGeral],
   data() {
     return {
+      filtro:0,
+      titulo_filtro: ['Cliente/Fornecedor', 'Cliente', 'Fornecedor'],
       store,
       busca:'',
       loading:false,
@@ -247,25 +262,33 @@ export default {
     };
   },
   computed:{
-    Clientes() {
+    Registros() {
       var self = this;
-      var clientes = this.clientes;
+      var registros = this.store.estacoes[this.store.estacao].registros;
       var busca = this.busca.toLowerCase();
+      var filtro = this.filtro
 
+      // evento: ['fornecimento', 'recebimento'],
+      if (filtro > 0) {
+        registros = registros.filter((registro) => {
 
-      if (busca) {
-        var data = clientes.filter(function (row) {
-          return Object.keys(row).some(function (key) {
-            return (
-              String(row[key])
-                .toLowerCase()
-                .indexOf(busca) > -1
-            );
-          });
-        });
-        return data;
+          return registro.evento == filtro -1
+        })
       }
-      return clientes;
+
+      // if (busca) {
+      //   var data = registros.filter(function (row) {
+      //     return Object.keys(row).some(function (key) {
+      //       return (
+      //         String(row[key])
+      //           .toLowerCase()
+      //           .indexOf(busca) > -1
+      //       );
+      //     });
+      //   });
+      //   return data;
+      // }
+      return registros;
     }
    
   },
@@ -344,5 +367,7 @@ export default {
 </script>
 
 <style scoped>
-
+.filtro-selecionado{
+  background-color: ;
+}
 </style>
