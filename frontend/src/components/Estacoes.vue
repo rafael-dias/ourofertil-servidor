@@ -131,7 +131,7 @@ export default {
      Detalhes(ele) {
       this.store.estacao = ele.estacao
       localStorage.setItem('estacao', ele.estacao)
-      this.$router.push('/registros')
+      this.$router.push('/registros-estacao')
     },
 
 
