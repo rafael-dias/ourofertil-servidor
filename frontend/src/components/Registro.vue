@@ -40,13 +40,13 @@
           </div>
           <div class="col-12 col-xxl-9 ">
             <div class="col-12 mb-2">
-
-              filtros: <span class="btn btn-sm me-2" :class="[filtro == 0 ? 'btn-success' : 'btn-outline-secondary']"
-                @click="filtro = 0">todos</span>
+              filtros:
               <span class="btn btn-sm me-2" :class="[filtro == 1 ? 'btn-success' : 'btn-outline-secondary']"
                 @click="filtro = 1">fornecimento</span>
-              <span class="btn btn-sm  me-auto" :class="[filtro == 2 ? 'btn-success' : 'btn-outline-secondary']"
+              <span class="btn btn-sm  me-2" :class="[filtro == 2 ? 'btn-success' : 'btn-outline-secondary']"
                 @click="filtro = 2">recebimento</span>
+              <span class="btn btn-sm me-2" :class="[filtro == 0 ? 'btn-success' : 'btn-outline-secondary']"
+                @click="filtro = 0">geral</span>
 
 
             </div>
@@ -56,13 +56,13 @@
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">{{ titulo_filtro[filtro]}}</th>
-                    <th scope="col">CPF/CNPJ</th>
-                    <th scope="col">Documento Carga</th>
-                    <th scope="col">Volume Recebido</th>
-                    <th scope="col">Volume Venda</th>
-                    <th scope="col">Volume Fornecido</th>
-                    <th scope="col">Volume Tanque</th>
+                    <th scope="col" v-show="filtro != 0">{{ titulo_filtro[filtro]}}</th>
+                    <th scope="col" v-show="filtro != 0">CPF/CNPJ</th>
+                    <th scope="col" v-show="filtro != 0">Documento Carga</th>
+                    <th scope="col" v-show="filtro == 0">Volume Tanque</th>
+                    <th scope="col" v-show="filtro == 2 || filtro == 0">Volume Recebido</th>
+                    <th scope="col" v-show="filtro == 1 || filtro == 0">Volume Fornecido</th>
+                    <th scope="col">Data</th>
                     <th scope="col">Evento</th>
                     <th scope="col">Detalhes</th>
                   </tr>
@@ -84,15 +84,17 @@
                 <tbody>
                   <tr v-for="(reg, i) in Registros">
                     <th scope="row">{{ i + 1 }}</th>
-                    <td>{{ reg.cliente }}</td>
-                    <!-- <td>{{ reg.nome_transportador }}</td> -->
-                    <td>{{ reg.cnpj }}</td>
-                    <td>{{ reg.doc_carga }}</td>
-                    <td>{{ reg.volume_recebido }}</td>
-                    <td>{{ reg.volume_venda }}</td>
-                    <td>{{ reg.volume_carregado }}</td>
-                    <td>{{ reg.volume_tanque }}</td>
-                    <td>{{ reg.evento == 0 ?'fornecimento':'recebimento' }}</td>
+                    <td v-show="filtro == 1">{{ reg.cliente }}</td>
+                    <td v-show="filtro == 2">{{ reg.nome_transportador }}</td>
+                    <td v-show="filtro != 0">{{ reg.cnpj }}</td>
+                    <td v-show="filtro != 0">{{ reg.doc_carga }}</td>
+                    <td v-show="filtro == 0">{{ reg.volume_tanque }}</td>
+                    <td v-show="filtro == 2 || filtro ==0">{{ reg.volume_recebido }}</td>
+                    <td v-show="filtro == 1 || filtro == 0">{{ reg.volume_carregado }}</td>
+                    <td>{{ formatDate(reg.data) }}</td>
+                    <td><span class="badge " :class="reg.evento == 0 ? 'text-bg-success' : 'text-bg-secondary'">{{ reg.evento
+                        == 0 ?'fornecimento':'recebimento' }}</span>
+                    </td>
                     <td>
                       <div class="btn btn-sm btn-outline-secondary " @click="ModalDetalhes(reg)">Detalhes</div>
                     </td>
@@ -132,8 +134,11 @@
               <form>
                 <div class="row">
                   <div class="col-md-12 mb-3">
-                    <label for="cliente" class="form-label">Cliente/Fornecedor</label>
-                    <input type="text" class="form-control" id="cliente" v-model="modal_detalhes.cliente" disabled>
+                    <label for="cliente" class="form-label"
+                      v-text="modal_detalhes.evento == 0 ? 'Cliente' : 'Transportador' "></label>
+                    <input type="text" class="form-control" id="cliente"
+                      :value="modal_detalhes.evento == 0 ? modal_detalhes.cliente : modal_detalhes.nome_transportador"
+                      disabled>
                   </div>
                 </div>
                 <div class="row">
@@ -150,7 +155,7 @@
                     <input type="text" class="form-control" id="telefone" v-model="modal_detalhes.telefone" disabled>
                   </div>
 
-                  <div class="col-md-6 mb-3">
+                  <div class="col-md-6 mb-3" v-show="modal_detalhes.evento == 0">
                     <label for="nome_transportador" class="form-label">Nome Transportador</label>
                     <input type="text" class="form-control" id="nome_transportador"
                       v-model="modal_detalhes.nome_transportador" disabled>
@@ -160,20 +165,21 @@
                     <input type="text" class="form-control" id="placa" v-model="modal_detalhes.placa" disabled>
                   </div>
 
-                  <div class="col-md-6 mb-3">
-                    <label for="volume_recebido" class="form-label">Volume Recebido</label>
+                  <div class="col-md-6 mb-3" v-show="modal_detalhes.evento == 1">
+                    <label for=" volume_recebido" class="form-label">Volume Recebido</label>
                     <input type="number" class="form-control" id="volume_recebido"
                       v-model="modal_detalhes.volume_recebido" disabled>
                   </div>
-                  <div class="col-md-6 mb-3">
+                  <div class="col-md-6 mb-3" v-show="modal_detalhes.evento == 0">
                     <label for="volume_venda" class="form-label">Volume Venda</label>
                     <input type="number" class="form-control" id="volume_venda" v-model="modal_detalhes.volume_venda"
                       disabled>
                   </div>
 
-                  <div class="col-md-6 mb-3">
-                    <label for="volume_carregado" class="form-label">Volume Carregado</label>
-                    <input type="number" class="form-control" id="volume_carregado"
+                  <div class="col-md-6 mb-3" v-show="modal_detalhes.evento == 0">
+                    <label for="volume_carregado" class="form-label">Volume
+                      Fornecido</label>
+                    <input type=" number" class="form-control" id="volume_carregado"
                       v-model="modal_detalhes.volume_carregado" disabled>
                   </div>
                   <div class="col-md-6 mb-3">
@@ -234,8 +240,8 @@ export default {
   mixins: [MixinGeral],
   data() {
     return {
-      filtro:0,
-      titulo_filtro: ['Cliente/Fornecedor', 'Cliente', 'Fornecedor'],
+      filtro:1,
+      titulo_filtro: ['', 'Cliente', 'Transportador'],
       store,
       busca:'',
       loading:false,
