@@ -131,9 +131,17 @@ app.post('/login', async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(senha, user.senha);
     if (!isPasswordValid) return res.status(400).json({ message: 'Senha incorreta!' });
-
+    // usuario: 'ouropro',
+    //     senha: hashedPassword,
+    //         cidade: '',
+    //             tipo_usuario: 1
     const token = generateToken(user);
-    res.json({ token });
+    res.json({ token, 
+        usuario:{
+         usuario:user.usuario,
+          cidade: user.cidade,
+            tipo_usuario: user.tipo_usuario
+    } });
     // res.json({ token, redirectUrl: '/dashboard' });
 })
 
@@ -214,6 +222,26 @@ app.get('/registros', authenticateToken, async (req, res) => {
         order: [['createdAt', 'DESC']]
     })
     res.status(200).json({ registros })
+})
+app.get('/deletar-registro/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+console.log('deletar-registros', id);
+    try {
+        const result = await Registro.destroy({
+            where: {
+                id: id
+            }
+        });
+        if (result) {
+            res.status(200).json({ msg: `Registro com ID ${id} deletado com sucesso!` })
+        } else {
+            res.status(404).json({ msg: `Registro com ID ${id} não encontrado.` })
+        }
+    } catch (error) {
+        console.error('Erro ao deletar registro:', error);
+        res.status(400).json({ msg: `Erro ao deletar registro:` })
+    }
+        
 })
 
 
