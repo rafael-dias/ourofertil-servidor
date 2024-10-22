@@ -64,7 +64,7 @@
                     <th scope="col" v-show="filtro == 1 || filtro == 0">Volume Fornecido</th>
                     <th scope="col">Data</th>
                     <th scope="col">Evento</th>
-                    <th scope="col" v-if="store.usuario.tipo_usuario == 999">Excluir</th>
+                    <th scope="col" v-show="store.usuario.tipo_usuario == 999">Excluir</th>
                     <th scope="col">Detalhes</th>
                   </tr>
                 </thead>
@@ -306,6 +306,9 @@ export default {
     if(!this.store.estacao){
       this.store.estacao = localStorage.getItem('estacao')
     }
+    if(!this.store.usuario?.tipo_usuario){
+      this.store.usuario = JSON.parse(localStorage.getItem('usuario'))
+    }
     this.FetchRegistros()
   },
   methods: {
@@ -319,28 +322,23 @@ export default {
       // /deletar-registro
       let self = this
       const token = localStorage.getItem('token');
-      var registros = self.store.estacoes[this.store.estacao].registros
-
+      var registros = this.store.estacoes[this.store.estacao].registros
+      var id = registro.id
       const config = {
         headers: { Authorization: `Bearer ${token}` }
       };
 
       api.get(`/deletar-registro/${registro.id}`, config).then((response) => {
-        // console.log(response);
 
-        // if (response.status == 403 || response.status == 401){
-        //     self.$router.push('/login')
-        //     return
-        // }
-        // self.store.autenticacao = true
         registros = registros.filter(registro => registro.id !== id);
-        
+        self.store.estacoes[self.store.estacao].registros = registros
       }).catch((err) => {
         console.log('err');
-
+        
       })
-
+      
     },
+   
     Atualizar(){
       let self = this
       self.loading = true

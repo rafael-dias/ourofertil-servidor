@@ -62,6 +62,7 @@ export default {
         if (response.status == 200) {
           self.store.autenticacao = data.token
           localStorage.setItem('token', data.token);
+          localStorage.setItem('usuario', JSON.stringify(data.usuario));
           self.store.usuario = data.usuario
           self.$router.push('/estacoes')
         } else {
