@@ -64,7 +64,7 @@
                     <th scope="col" v-show="filtro == 1 || filtro == 0">Volume Fornecido</th>
                     <th scope="col">Data</th>
                     <th scope="col">Evento</th>
-                    <th scope="col" v-show="store.usuario.tipo_usuario == 999">Excluir</th>
+                    <th scope="col" v-show="store.usuario?.tipo_usuario == 999">Excluir</th>
                     <th scope="col">Detalhes</th>
                   </tr>
                 </thead>
@@ -307,7 +307,10 @@ export default {
       this.store.estacao = localStorage.getItem('estacao')
     }
     if(!this.store.usuario?.tipo_usuario){
-      this.store.usuario = JSON.parse(localStorage.getItem('usuario'))
+      
+      if (localStorage.getItem('usuario')){
+        this.store.usuario = JSON.parse(localStorage.getItem('usuario'))
+      }
     }
     this.FetchRegistros()
   },
